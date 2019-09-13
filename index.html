@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>LAHS Hack Club</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+
+  <nav>
+    <h4>Force Table Equilibrium App</h4>
+    <p>By <a href="https://github.com/kungminlin/force-equilibrium" style="text-decoration: underline">Kung-Min Lin</a></p>
+  </nav>
+
+  <div class="row" style="padding-top:20px;">
+    <div class="col s12">
+      <div class="col s6">
+        <form>
+          <h5>Force 1 (<span id="force1"></span>)</h5>
+          <p style="color:blue;" id="force1_xy"></p>
+          <p class="range-field">
+            <label for="force-1-weight">Magnitude (Newtons)</label>
+            <input name="force-1-weight" type="range" id="force-1-weight" min="0" max="500" />
+          </p>
+          <p class="range-field">
+            <label for="force-1-angle">Angle (Degrees)</label>
+            <input name="force-1-angle" type="range" id="force-1-angle" min="0" max="360" />
+          </p>
+          <h5>Force 2 (<span id="force2"></span>)</h5>
+          <p style="color:red;" id="force2_xy"></p>
+          <p class="range-field">
+            <label for="force-2-weight">Magnitude (Newtons)</label>
+            <input name="force-2-weight" type="range" id="force-2-weight" min="0" max="500" />
+          </p>
+          <p class="range-field">
+            <label for="force-2-angle">Angle (Degrees)</label>
+            <input name="force-2-angle" type="range" id="force-2-angle" min="0" max="360" />
+          </p>
+          <h5>Force 3 (<span id="force3"></span>)</h5>
+          <p style="color:green;" id="force3_xy"></p>
+        </form>
+      </div>
+      <div class="col s6">
+        <canvas id="diagram" width=400 height=400></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/init.js"></script>
+  <script src="js/index.js"></script>
+
+  <!-- <footer class="page-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">An Equilibrium App</h5>
+          <p class="grey-text text-lighten-4">Now you can conveniently calculate how much force you have to put in to fight for your Costco carts.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Copyright © 2019 Kung-Min Lin
+      <a class="grey-text text-lighten-4 right" href="https://github.com/kungminlin/force-equilibrium">GitHub</a>
+      </div>
+    </div>
+  </footer> -->
+
+  </body>
+</html>
