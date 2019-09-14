@@ -2,64 +2,138 @@ const CANVAS_SIZE = 400;
 
 var canvas = document.getElementById("diagram");
 var ctx = canvas.getContext("2d");
-point(0, 0);
-point(50, 50);
-update();
+setInterval(() => update(), 50)
+
+M.AutoInit();
+
+var forces = [];
 
 $(document).ready(function() {
-  $(document).mousemove(() => {update();})
+  $(document)
+    .on('keyup', 'input[name="force"]', (e) => {
+      $(e.target).closest('.force').siblings('.weight').find('input[name="weight"]').val(Math.round($(e.target).val()*1000*1000/9.8)/1000);
+      M.updateTextFields();
+    })
+
+    .on('keyup', 'input[name="weight"]', (e) => {
+      $(e.target).closest('.weight').siblings('.force').find('input[name="force"]').val(Math.round($(e.target).val()*1000*9.8/1000)/1000);
+      M.updateTextFields();
+    })
+
+    .on('mousemove keydown keyup', (e) => {
+      $('input[name="angle"]').closest('div').find('.deg-display').text($('input[name="angle"]').val());
+    })
+
+    .on('click', '.delete', (e) => {
+      $(e.target).closest('li').remove();
+    })
+
+  addForceEntry("Force 1", 70, 60);
+  addForceEntry("Force 2", 80, 120);
+  addForceEntry("Force 3", 90, 210);
 })
 
 function update() {
   clear();
 
-  $("#force1").text($("#force-1-weight").val() + "N or " + Math.round(parseFloat($("#force-1-weight").val())*1000/9.8, 2) + "g @ " + $("#force-1-angle").val() + "deg");
-  $("#force2").text($("#force-2-weight").val() + "N or " + Math.round(parseFloat($("#force-2-weight").val())*1000/9.8, 2) + "g @ " + $("#force-2-angle").val() + "deg");
-  $("#force3").text($("#force-3-weight").val() + "N or " + Math.round(parseFloat($("#force-3-weight").val())*1000/9.8, 2) + "g @ " + $("#force-3-angle").val() + "deg");
+  let eforce = new Force('equilibrium force', 0, 0);
 
-  force1_weight = parseFloat($("#force-1-weight").val())/5;
-  force1_angle = parseFloat($("#force-1-angle").val())*Math.PI/180;
-  force2_weight = parseFloat($("#force-2-weight").val())/5;
-  force2_angle = parseFloat($("#force-2-angle").val())*Math.PI/180;
-  force3_weight = parseFloat($("#force-3-weight").val())/5;
-  force3_angle = parseFloat($("#force-3-angle").val())*Math.PI/180;
-  force1_x = force1_weight*Math.cos(force1_angle);
-  force1_y = force1_weight*Math.sin(force1_angle);
-  force2_x = force2_weight*Math.cos(force2_angle);
-  force2_y = force2_weight*Math.sin(force2_angle);
-  force3_x = force3_weight*Math.cos(force3_angle);
-  force3_y = force3_weight*Math.sin(force3_angle);
+  forces.forEach((force) => {
+    let $input = $(`li[data-name='${force.name}']`);
+    let newtons = parseFloat($input.find('input[name="force"]').val()=="" ? 0 : $input.find('input[name="force"]').val());
+    let angle = parseFloat($input.find('input[name="angle"]').val()=="" ? 0 : $input.find('input[name="angle"]').val());
+    force.update(newtons, angle);
 
-  point(force1_x, force1_y, "blue");
-  point(force2_x, force2_y, "red");
-  point(force3_x, force3_y, "green");
+    eforce.vector.x -= force.vector.x;
+    eforce.vector.y -= force.vector.y;
 
-  force4_x = force1_weight*Math.cos(force1_angle) + force2_weight*Math.cos(force2_angle) + force3_weight*Math.cos(force3_angle);
-  force4_y = force1_weight*Math.sin(force1_angle) + force2_weight*Math.sin(force2_angle) + force3_weight*Math.sin(force3_angle);
+    force.vector.draw();
+  })
 
-  point(-force4_x, -force4_y, "black");
-  $("#force4").text(Math.round(Math.sqrt(force4_x**2 + force4_y**2)*5, 2) + "N or " + Math.round(Math.sqrt(force4_x**2 + force4_y**2)*5*1000/9.8, 2) + "g @ " + Math.round((Math.atan2(-force4_y, -force4_x)*180/Math.PI) < 0 ? Math.abs(Math.atan2(-force4_y, -force4_x)*180/Math.PI) : 360 - (Math.atan2(-force4_y, -force4_x)*180/Math.PI), 2) + "deg");
-
-  $("#force1_xy").text("x: " + Math.round(force1_x*5) + ", y: " + -Math.round(force1_y*5));
-  $("#force2_xy").text("x: " + Math.round(force2_x*5) + ", y: " + -Math.round(force2_y*5));
-  $("#force3_xy").text("x: " + Math.round(force3_x*5) + ", y: " + Math.round(force3_y*5));
-  $("#force4_xy").text("x: " + Math.round(force4_x*5) + ", y: " + Math.round(force4_y*5));
-}
-
-function point(x, y, color) {
-  ctx.beginPath();
-  ctx.arc(x+(CANVAS_SIZE/2), y+(CANVAS_SIZE/2), 3, 0, 2 * Math.PI);
-  ctx.fillStyle = color ? color : "#000000";
-  ctx.fill();
-  ctx.strokeStyle = color ? color: "#000000";
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(CANVAS_SIZE/2, CANVAS_SIZE/2);
-  ctx.lineTo(x+(CANVAS_SIZE/2), y+(CANVAS_SIZE/2));
-  ctx.stroke();
+  eforce.vector.draw();
 }
 
 function clear() {
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+}
+
+function addForceEntry(name, force, angle) {
+  if (!name) var name = prompt('The name of this force:');
+  if (!name) return;
+  if (forces.filter(f => f.name == name).length > 0) {
+    alert('That force already exists!');
+    return;
+  }
+
+  var $entry = $(`<li data-name="${name}"><div class="collapsible-header"><i class="delete material-icons red-text text-darken-1">cancel</i>${name}</div><div class="collapsible-body"><div class="row"><div class="force input-field col s6"><input name="force" type="number" value=0><label for="force">Force (N)</label></div><div class="weight input-field col s6"><input name="weight" type="number" value=0><label for="force">Weight (g)</label></div><div><label>Angle (deg) - <span class="deg-display"></span></label><p class="range-field"><input name="angle" type="range" min=0 max=360></p></div></div></div></li>`)
+
+  if (force) $entry.find('input[name="force"]').val(force);
+  if (angle) $entry.find('input[name="angle"]').val(angle);
+
+  $entry.appendTo('#forces');
+  $entry.find('input[name="force"]').keyup();
+
+  addForce(name, force ? force : 0, angle ? angle : 0);
+}
+
+function addForce(name, force, angle) {
+  forces.push(new Force(name, force, angle));
+}
+
+class Force {
+  constructor(name, force, angle) {
+    this._name = name;
+    this._force = force;
+    this._angle = angle;
+    let rad = angle*Math.PI/180;
+    this._vector = new Vector(name, force*Math.cos(rad), force*Math.sin(rad));
+  }
+  get name() { return this._name; }
+  get force() { return this._force; }
+  get angle() { return this._angle; }
+  get vector() { return this._vector; }
+
+  update(force, angle) {
+    this._force = force;
+    this._angle = angle;
+    let rad = angle*Math.PI/180;
+    this._vector.x = force*Math.cos(rad);
+    this._vector.y = force*Math.sin(rad);
+  }
+}
+
+class Vector {
+  constructor(name, x, y) {
+    this.name = name;
+    this._x = x;
+    this._y = y;
+  }
+
+  draw() {
+    let x = this.x+(CANVAS_SIZE/2);
+    let y = -this.y+(CANVAS_SIZE/2);
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.strokeStyle = "#000000";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(CANVAS_SIZE/2, CANVAS_SIZE/2);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+
+    ctx.font = "10px Arial";
+    ctx.fillText(this.name, x+5, y+5);
+    ctx.fillText(`(${Math.round(this.x*100)/100}, ${Math.round(this.y*100)/100})`, x+5, y+15);
+  }
+
+  get x() { return this._x; }
+  get y() { return this._y; }
+  get angle() { return Math.atan2(this._y, this._x); }
+  get magnitude() { return Math.sqrt(this._x**2 + this._y**2); }
+
+  set x(x) { this._x = x; }
+  set y(y) { this._y = y; }
 }

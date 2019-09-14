@@ -18,43 +18,11 @@
   </nav>
 
   <div class="row" style="padding-top:20px;">
+    <a id="add-force" onclick="addForceEntry();" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
     <div class="col s12">
-      <div class="col s6">
-        <form>
-          <h5>Force 1 (<span id="force1"></span>)</h5>
-          <p style="color:blue;" id="force1_xy"></p>
-          <p class="range-field">
-            <label for="force-1-weight">Magnitude (Newtons)</label>
-            <input name="force-1-weight" type="range" id="force-1-weight" min="0" max="500" />
-          </p>
-          <p class="range-field">
-            <label for="force-1-angle">Angle (Degrees)</label>
-            <input name="force-1-angle" type="range" id="force-1-angle" min="0" max="360" />
-          </p>
-          <h5>Force 2 (<span id="force2"></span>)</h5>
-          <p style="color:red;" id="force2_xy"></p>
-          <p class="range-field">
-            <label for="force-2-weight">Magnitude (Newtons)</label>
-            <input name="force-2-weight" type="range" id="force-2-weight" min="0" max="500" />
-          </p>
-          <p class="range-field">
-            <label for="force-2-angle">Angle (Degrees)</label>
-            <input name="force-2-angle" type="range" id="force-2-angle" min="0" max="360" />
-          </p>
-          <h5>Force 3 (<span id="force3"></span>)</h5>
-          <p style="color:green;" id="force3_xy"></p>
-          <p class="range-field">
-            <label for="force-3-weight">Magnitude (Newtons)</label>
-            <input name="force-3-weight" type="range" id="force-3-weight" min="0" max="500" />
-          </p>
-          <p class="range-field">
-            <label for="force-3-angle">Angle (Degrees)</label>
-            <input name="force-3-angle" type="range" id="force-3-angle" min="0" max="360" />
-          </p>
-          <h5>Equilibrium Force (<span id="force4"></span>)</h5>
-          <p id="force4_xy"></p>
-
-        </form>
+      <div class="col s6" style="overflow:auto;height:75vh">
+        <ul id="forces" class="collapsible popout">
+        </ul>
       </div>
       <div class="col s6">
         <canvas id="diagram" width=400 height=400></canvas>
@@ -64,26 +32,7 @@
 
   <!--  Scripts-->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="js/materialize.js"></script>
-  <script src="js/init.js"></script>
+  <script src="js/materialize.min.js"></script>
   <script src="js/index.js"></script>
-
-  <!-- <footer class="page-footer">
-    <div class="container">
-      <div class="row">
-        <div class="col l6 s12">
-          <h5 class="white-text">An Equilibrium App</h5>
-          <p class="grey-text text-lighten-4">Now you can conveniently calculate how much force you have to put in to fight for your Costco carts.</p>
-        </div>
-      </div>
-    </div>
-    <div class="footer-copyright">
-      <div class="container">
-      Copyright © 2019 Kung-Min Lin
-      <a class="grey-text text-lighten-4 right" href="https://github.com/kungminlin/force-equilibrium">GitHub</a>
-      </div>
-    </div>
-  </footer> -->
-
-  </body>
+</body>
 </html>

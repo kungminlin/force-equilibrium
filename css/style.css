@@ -23,3 +23,16 @@ nav {
   nav > p {
     margin: 0;
   }
+
+#add-force {
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+}
+
+.delete {
+  transition: transform .3s;
+}
+  .delete:hover {
+    transform: scale(1.3);
+  }
