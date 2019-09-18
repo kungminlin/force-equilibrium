@@ -50,6 +50,8 @@ function update() {
     force.vector.draw();
   })
 
+  $('#equilibrium-force').text(`Equilibrium Force: ${eforce.force} N @ ${eforce.angle} deg`);
+
   eforce.vector.draw();
 }
 
